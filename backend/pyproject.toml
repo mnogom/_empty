@@ -8,6 +8,7 @@ authors = ["Konstantin Freidlin <freidlinks@ya.ru>"]
 python = "^3.9"
 Django = "2.2.10"
 environs = "^9.3.2"
+djangorestframework = "^3.12.4"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
