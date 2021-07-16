@@ -3,6 +3,19 @@ Junior cheat sheet for fullstack
 
 ---
 
+## Preparing tools
+```bash
+pip3 install poetry --upgrade --user
+pip3 install virtualenv --upgrade --user
+
+npm install vue@next
+npm install -g @vue/cli
+vue upgrade --next
+```
+
+
+---
+
 ## Create project
 ### 1. Create project dir and README.md
 
@@ -145,7 +158,7 @@ sqlparse            0.4.1  A non-validating SQL parser.
 
 ```bash
 backend % poetry run django-admin startproject backend
-backend % tree -aL 1
+backend % tree -aL 2
 
 .
 ├── .gitignore
@@ -496,3 +509,4 @@ vue create frontend
 cd frontend
 ```
 
+## TBC
