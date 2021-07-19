@@ -1,15 +1,23 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <Navigation/>
+    <RandomSequence msg="Generate random sequence"/>
+    <div class="framework-info">
+      <span>Created  with</span>
+      <img alt="Vue logo" src="./assets/logo.png" height="50">
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import RandomSequence from './components/RandomSequence.vue'
+import Navigation from './components/Navigation.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    RandomSequence,
+    Navigation,
   }
 }
 </script>
@@ -23,4 +31,11 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
+.framework-info {
+  position: absolute;
+  bottom: 3rem;
+  right: 3rem;
+}
+
 </style>

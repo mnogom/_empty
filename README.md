@@ -1,5 +1,7 @@
-# DJANGO + VUE 
-Junior cheat sheet for fullstack
+# Empty fullstack project
+Stack: django, django REST framework, vue.js 3, axios
+
+_Junior cheat sheet for fullstack_
 
 ---
 
@@ -112,11 +114,11 @@ run:
 gunicorn-run:
 	source .venv/bin/activate ; \
 	cd backend ; \
-	gunicorn backend.wsgi ; \
+	gunicorn backend.wsgi
 
 django-shell:
 	cd backend ; \
-	poetry run python manage.py shell ; \
+	poetry run python manage.py shell
 
 migrations:
 	poetry run python backend/manage.py makemigrations
@@ -134,18 +136,20 @@ lint:
 ```bash
 backend % poetry add django@2.2.10
 backend % poetry add djangorestframework
+backend % poetry add django-cors-headers
 backend % poetry add environs
 backend % poetry add flake8 --dev
 backend % poetry add gunicorn --dev
 
 backend % poetry show
 
-django              2.2.10 A high-level Python Web framework that encourages rapid development and clean, pragmatic design.
+django              2.2.10 A high-level Python Web framework that encourages rapid development and clean, pragma...
+django-cors-headers 3.7.0  django-cors-headers is a Django application for handling the server headers required ...
 djangorestframework 3.12.4 Web APIs for Django, made easy.
 environs            9.3.2  simplified environment variable parsing
 flake8              3.9.2  the modular source code checker: pep8 pyflakes and co
 gunicorn            20.1.0 WSGI HTTP Server for UNIX
-marshmallow         3.12.2 A lightweight library for converting complex datatypes to and from native Python datatypes.
+marshmallow         3.12.2 A lightweight library for converting complex datatypes to and from native Python data...
 mccabe              0.6.1  McCabe checker, plugin for flake8
 pycodestyle         2.7.0  Python style guide checker
 pyflakes            2.3.1  passive checker of Python programs
@@ -317,7 +321,7 @@ backend
     └── views.py
 ```
 
-### 13. Add apps *api*, *vue_app* and *Django REST* to settings
+### 13. Add apps *CORS*, *Django REST*, *api* and *vue_app* to settings
 
 `backend/backend/settings.py`
 
@@ -326,10 +330,18 @@ backend
 # Application definition
 INSTALLED_APPS = [
      <...>,
+    'corsheaders',
     'rest_framework',
     'api',
     'vue_app',
 ]
+<...>
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    <...>
+]
+
 <...>
 
 # Static files (CSS, JavaScript, Images)
@@ -337,7 +349,18 @@ INSTALLED_APPS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
 <...>
+
+# CORS setup
+# https://pypi.org/project/django-cors-headers/
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+       'http://localhost:8080',
+)
+
+
 ```
 
 ### 14. Total structure
@@ -515,7 +538,7 @@ frontend % rm README.md # I don't need it
 frontend % nano Makefile
 ```
 
-```frontend/Makefile```
+`frontend/Makefile`
 ```bash
 install:
 	npm install
@@ -524,7 +547,10 @@ run:
 	npm run serve
 
 build:
-	npm run build
+	rm -rf ../backend/backend/vue_app/static/* ; \
+	rm -rf ../backend/backend/vue_app/templates/* ; \
+	npm run build ; \
+	cp public/static/* ../backend/backend/vue_app/static
 
 lint:
 	npm run lint
@@ -540,15 +566,108 @@ frontend % npm install axios --save
 frontend % nano vue.config.js
 ```
 
-```frontend/vue.config.js```
+`frontend/vue.config.js`
 ```js
 module.exports = {
-    outputDir : '../backend/front_runner/mainapp',
+    outputDir : '../backend/backend/vue_app',
     assetsDir : 'static',
     indexPath : 'templates/index.html',
-
 }
 ```
 
+Also we don't need to remove 'dest' directory, so we need add tag ```--no-clean``` for build command in 
+`frontend/package.json`
+```js
+<...>
+"build": "vue-cli-service build --no-clean",
+<...>
+```
 
+### 5. favicon as static file [?]
+Remove `public/favicon.ico`
+```bash
+frontend % rm public/favicon.ico
+```
+
+Make ```static``` directory in ```frontend/public```
+
+Place image ```favicon.png``` to ```frontend/public/static```
+
+```frontend/public/static/favicon.png```
+
+<img src="https://s166vla.storage.yandex.net/rdisk/bf6ceacbfc23cf7a60b069a9a7dbd8c09bb34ef44065fd6c87b35828e8b3193b/60f591dd/YuF1AkqY7vFrwwvnnznVKVgQdXaY6aVykGyQom3fPDGcBQwE0k-Fgtb2UfoSCm1Mswwep1zoSAWoW9do6hwUaQ==?uid=0&filename=favicon.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=1864&hid=9f42e7b85affce806b90be0ce40c6be3&media_type=image&tknv=v2&etag=87fb134c6791e9a90e79ab92b2865377&rtoken=qlGf6AtlWpUG&force_default=no&ycrid=na-b2ef2bb8db8d26a6a30fc65156e4bd84-downloader14e&ts=5c77b18f27140&s=2e5934f223abf117eb9463a2f57111a31a98a633a6bcf2e9424f66bec475cabf&pb=U2FsdGVkX19LehIkB8E9U9F6WEldIKhZ1HaeJmYEsIqYM04fyRiOJ-RaaIKemWSUhtkRYClqHx1DKVfjuN7CrYlSzS_4jF6-Sq-YcXetHwE"/>
+
+Edit src in `public/index.html`
+```html
+<...>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+<...>
+```
+
+### 6. Check structure
+```bash
+frontend % tree -L 3
+
+.
+├── Makefile
+├── README.md
+├── babel.config.js
+├── node_modules
+│   └── <..>
+├── package-lock.json
+├── package.json
+├── public
+│   ├── index.html
+│   └── static
+│       └── favicon.png
+├── src
+│   ├── App.vue
+│   ├── assets
+│   │   └── logo.png
+│   ├── components
+│   │   └── HelloWorld.vue
+│   └── main.js
+├── subl
+└── vue.config.js
+```
+
+### 7. Try to run and build
+1. Let's run dev server
+```bash
+frontend % make run
+```
+Check out url [http://127.0.0.1:8080](http://127.0.0.1:8080)
+
+2. Let's build for prod and run from Django server
+```bash
+frontend % make build
+frontend % cd ../backend
+backend % make run
+```
+Check out url [http://127.0.0.1:8000/vue](http://127.0.0.1:8000/vue)
+
+Go back to frontend
+```bash
+backend % cd ../frontend
+frontend %
+```
+
+### 8. Setup _axios_ for _dev_ and _prod_ api urls
+If you run vue app with `make run` your base url will be `http://127.0.0.1:8000`. If you
+build vue app with `make build` your base url will be `/`
+
+`frontend/src/main.js`
+```js
+import { createApp } from 'vue'
+import App from './App.vue'
+import axios from "axios"
+
+// Setup dev and prod base urls for axios
+let dev_mode = process.env.NODE_ENV === 'development'
+axios.defaults.baseURL = dev_mode ? 'http://127.0.0.1:8000' : '/'
+
+createApp(App).mount('#app')
+```
+
+---
 ### TBC

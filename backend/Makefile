@@ -7,11 +7,11 @@ run:
 gunicorn-run:
 	source .venv/bin/activate ; \
 	cd backend ; \
-	gunicorn backend.wsgi ; \
+	gunicorn backend.wsgi
 
 django-shell:
 	cd backend ; \
-	poetry run python manage.py shell ; \
+	poetry run python manage.py shell
 
 migrations:
 	poetry run python backend/manage.py makemigrations
