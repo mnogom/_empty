@@ -505,8 +505,50 @@ backend % cd ..
 
 ### 1. Start Vue app
 ```bash
-vue create frontend
-cd frontend
+% vue create frontend
+% cd frontend
 ```
 
-## TBC
+### 2. Setup Makefile
+```bash
+frontend % rm README.md # I don't need it
+frontend % nano Makefile
+```
+
+```frontend/Makefile```
+```bash
+install:
+	npm install
+
+run:
+	npm run serve
+
+build:
+	npm run build
+
+lint:
+	npm run lint
+```
+
+### 3. Add axios
+```bash
+frontend % npm install axios --save
+```
+
+### 4. Setup build settings
+```bash
+frontend % nano vue.config.js
+```
+
+```frontend/vue.config.js```
+```js
+module.exports = {
+    outputDir : '../backend/front_runner/mainapp',
+    assetsDir : 'static',
+    indexPath : 'templates/index.html',
+
+}
+```
+
+
+### TBC
