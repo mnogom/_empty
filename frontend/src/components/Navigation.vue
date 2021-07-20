@@ -1,7 +1,7 @@
 <template>
     <div>
         <a href="/">home</a>
-        <a href="/gers">gers</a>
+        <a href="/gers/">gers</a>
     </div>
 </template>
 

@@ -16,7 +16,7 @@ import Navigation from './components/Navigation.vue'
 
 const routes = {
     "/": Navigation,
-    "/gers": App,
+    "/gers/": App,
 }
 
 const SimpleRouter = {

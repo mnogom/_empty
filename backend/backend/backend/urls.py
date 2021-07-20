@@ -19,6 +19,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('vue/', include('vue_app.urls')),
     path('api/', include('api.urls')),
+    path('', include('vue_app.urls')),
 ]
