@@ -4,5 +4,5 @@ from .views import RandomView
 
 
 urlpatterns = [
-    path('random', RandomView.as_view())
+    path('random/', RandomView.as_view()),
 ]
