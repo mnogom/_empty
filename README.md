@@ -15,7 +15,6 @@ npm install -g @vue/cli
 vue upgrade --next
 ```
 
-
 ---
 
 ## Create project
@@ -1010,3 +1009,18 @@ createApp(SimpleRouter).mount('#app')
 
 ---
 ### TBC
+
+```bash
+npm install vue-router@next --save
+```
+---
+## Resources
+1. [Poetry](https://python-poetry.org/docs/)
+2. [Django start guide](https://www.djangoproject.com/start/)
+3. [Django REST Framework quickstart](https://www.django-rest-framework.org/tutorial/quickstart/)
+4. [Django CORS](https://github.com/adamchainz/django-cors-headers)
+5. [Vue.js introduction](https://v3.vuejs.org/guide/introduction.html)
+6. [About vue.config.js](https://cli.vuejs.org/config/)
+7. ~~[Vue.js routing](https://v3.vuejs.org/guide/routing.html#official-router)~~
+8. ~~[Github example Vue.js routing](https://github.com/phanan/vue-3.0-simple-routing-example)~~
+9. [Vue Router](https://router.vuejs.org/ru/guide/)
