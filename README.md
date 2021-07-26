@@ -1,11 +1,18 @@
 # Empty fullstack project
-Stack: django, django REST framework, vue.js 3, axios
+Stack: Django, Django REST framework (DRF), Vue.js 3, Axios, Vue Router
 
 _Junior cheat sheet for fullstack_
 
 ---
+## Look around
+1. [Prepare tools](#Prepare-tools)
+2. [Create a project](#Create-a-project)
+3. [Backend](#Backend)
+4. [Roadmap](#Roadmap)
+5. [Resources](#Resources)
 
-## Preparing tools
+---
+## Prepare tools
 ```bash
 pip3 install poetry --upgrade --user
 pip3 install virtualenv --upgrade --user
@@ -17,8 +24,8 @@ vue upgrade --next
 
 ---
 
-## Create project
-### 1. Create project dir and README.md
+## Create a project
+### 1. Create project directory and README.md
 
 ```bash
 mkdir empty_project
@@ -30,12 +37,37 @@ cd empty_project
 
 ```bash
 % git init
-% touch .gitignore
 ```
+* `/.gitignore`
+  
+  ```gitignore
+  .idea
+  .DS_Store
+  ```
+
+### 3. Create master Makefile
+* `/Makefile`
+  
+  ```Makefile
+  make install:
+      cd backend ; \
+      make install ; \
+      mv .env_example .env ; \
+      make migrations ; \
+      make migrate ; \
+      cd ../frontend ; \
+      make install
+  
+  make run:
+      cd frontend ; \
+      make build ; \
+      cd ../backend ; \
+      make run
+  ```
 
 ---
 
-## Backend (Django + Django Rest Framework)
+## Backend
 
 ### 1. Create dir for backend
 
@@ -47,27 +79,27 @@ cd empty_project
 ### 2. Make `.gitignore`
 
 ```bash
-backend % nano .gitignore
+backend % touch .gitignore
 ```
 
-`backend/.gitignore`
+* `backend/.gitignore`
 
-```
-__pycache__
-.venv
-.env
-dist
-snippets
-.vscode
-.idea
-.DS_Store
-.github/.DS_Store
-.coverage
-coverage.xml
-*.pyc
-db.sqlite3
-
-```
+  ```
+  __pycache__
+  .venv
+  .env
+  dist
+  snippets
+  .vscode
+  .idea
+  .DS_Store
+  .github/.DS_Store
+  .coverage
+  coverage.xml
+  *.pyc
+  db.sqlite3
+  
+  ```
 
 ### 3. Init virtual environment
 
@@ -82,53 +114,52 @@ backend % tree -aL 1
 └── pyproject.toml
 ```
 
-*if there no `backend/.venv`:*
-
-```bash
-backend % virtualenv .venv
-backend % poetry env use .venv/bin/python
-```
-check env setup
-```bash
-backend % poetry env list --full-path
-
-<..>/empty_project/backend/.venv (Activated)
-```
+> *if there is no `backend/.venv`:*
+> 
+> ```bash
+> backend % virtualenv .venv
+> backend % poetry env use .venv/bin/python
+> ```
+> check env setup
+> ```bash
+> backend % poetry env list --full-path
+> 
+> <..>/empty_project/backend/.venv (Activated)
+> ```
 
 ### 4. Create Makefile
 
-```
-backend % nano Makefile
+```bash
+backend % touch Makefile
 ```
 
 * `backend/Makefile`
 
-```
-install:
-	poetry install
-
-run:
-	poetry run python backend/manage.py runserver
-
-gunicorn-run:
-	source .venv/bin/activate ; \
-	cd backend ; \
-	gunicorn backend.wsgi
-
-django-shell:
-	cd backend ; \
-	poetry run python manage.py shell
-
-migrations:
-	poetry run python backend/manage.py makemigrations
-
-migrate:
-	poetry run python backend/manage.py migrate
-
-lint:
-	poetry run flake8 backend
-
-```
+    ```makefile
+    install:
+        poetry install
+  
+    run:
+        poetry run python backend/manage.py runserver
+  
+    gunicorn-run:
+        source .venv/bin/activate ; \
+        cd backend ; \
+        gunicorn backend.wsgi
+  
+    django-shell:
+        cd backend ; \
+        poetry run python manage.py shell
+  
+    migrations:
+        poetry run python backend/manage.py makemigrations
+  
+    migrate:
+        poetry run python backend/manage.py migrate
+  
+    lint:
+        poetry run flake8 backend
+    ```
 
 ### 5. Add packages
 
@@ -161,16 +192,14 @@ sqlparse            0.4.1  A non-validating SQL parser.
 
 ```bash
 backend % poetry run django-admin startproject backend
-backend % tree -aL 2
+backend % tree -aL 2 -I .venv
 
 .
 ├── .gitignore
-├── .venv
-│   └── <..>
 ├── Makefile
 ├── backend
-│   ├── backend
-│   └── manage.py
+│   ├── backend
+│   └── manage.py
 ├── poetry.lock
 └── pyproject.toml
 ```
@@ -183,19 +212,19 @@ backend % export DJANGO_SETTINGS_MODULE=backend.settings
 backend % deactivate
 ```
 
-Try to run with *Django [?]*
+Try to run using *Django [?]*
 
 ```bash
 backend % make run
 ```
 
-Try to run with Gunicorn
+Try to run using Gunicorn
 
 ```bash
 backend % make gunicorn-run
 ```
 
-### 8. Setup secrets keys
+### 8. Setup secret keys
 
 Create .env
 
@@ -205,28 +234,28 @@ backend % touch .env
 
 * `backend/.env` 
 
-```
-SECRET_KEY='strong key'
-```
+  ```
+  SECRET_KEY='strong key'
+  ```
 
-*Also I created file `.env_example` if you clone this repo - rename `.env_example` to `.env`. You don't need to create it.*
+*Also I created file `.env_example`. If you clone this repo - rename `.env_example` to `.env`. You don't need to create it.*
 
 Update key in settings
 
 * `backend/backend/settings.py`
 
-```python
-<...>
-from environs import Env
-
-# Setup environment
-env = Env()
-env.read_env(override=True)
-
-<...>
-SECRET_KEY = env.str('SECRET_KEY')
-<...>
-```
+    ```python
+    <...>
+    from environs import Env
+  
+    # Setup environment
+    env = Env()
+    env.read_env(override=True)
+  
+    <...>
+    SECRET_KEY = env.str('SECRET_KEY')
+    <...>
+    ```
 
 ### 9. Setup database *sqlite*
 
@@ -235,8 +264,8 @@ backend % make migrations
 backend % make migrate
 ```
 
-### 10. Create superuser.
-*We don't need superuser here. You can pass this step* 
+### 10. Create superuser
+*We don't need superuser here. You can skip this step.*
 
 ```bash
 backend % poetry run python backend/manage.py createsuperuser
@@ -244,7 +273,7 @@ backend % poetry run python backend/manage.py createsuperuser
 
 ### 11. Add apps to project
 
-This app will return Vue app
+This app will return Vue app.
 ```bash
 backend % cd backend
 
@@ -255,7 +284,7 @@ backend/backend % mkdir vue_app/static
 backend/backend % cd ..
 ```
 
-This app will work as API
+This app will work as API.
 ```bash
 backend % cd backend
 
@@ -267,43 +296,42 @@ backend/backend % cd ..
 ### 12. Check structure
 
 ```bash
-backend % tree -aL 2
+backend % tree -aL 2 -I .venv
 
 .
 ├── .env
 ├── .env_example
 ├── .gitignore
-├── .venv
-│   └── <..>
 ├── Makefile
 ├── backend
-│   ├── api
-│   ├── backend
-│   ├── db.sqlite3
-│   ├── manage.py
-│   └── vue_app
+│   ├── api
+│   ├── backend
+│   ├── db.sqlite3
+│   ├── manage.py
+│   └── vue_app
 ├── poetry.lock
 └── pyproject.toml
 ```
 
 ```bash
-backend % tree backend        
+backend % tree backend
+
 backend
 ├── api
-│   ├── __init__.py
-│   ├── admin.py
-│   ├── apps.py
-│   ├── migrations
-│   │   └── __init__.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations
+│   │   └── __init__.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
 ├── backend
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
 ├── db.sqlite3
 ├── manage.py
 └── vue_app
@@ -311,7 +339,7 @@ backend
     ├── admin.py
     ├── apps.py
     ├── migrations
-    │   └── __init__.py
+    │   └── __init__.py
     ├── models.py
     ├── static
     ├── templates
@@ -324,43 +352,41 @@ backend
 
 * `backend/backend/settings.py`
 
-```python
-<...>
-# Application definition
-INSTALLED_APPS = [
-     <...>,
-    'corsheaders',
-    'rest_framework',
-    'api',
-    'vue_app',
-]
-<...>
-
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    ```python
     <...>
-]
-
-<...>
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-
-<...>
-
-# CORS setup
-# https://pypi.org/project/django-cors-headers/
-
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-       'http://localhost:8080',
-)
-
-
-```
+    # Application definition
+    INSTALLED_APPS = [
+         <...>,
+        'corsheaders',
+        'rest_framework',
+        'api',
+        'vue_app',
+    ]
+    <...>
+  
+    MIDDLEWARE = [
+        'corsheaders.middleware.CorsMiddleware',
+        <...>
+    ]
+  
+    <...>
+  
+    # Static files (CSS, JavaScript, Images)
+    # https://docs.djangoproject.com/en/2.2/howto/static-files/
+  
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATIC_URL = '/static/'
+  
+    <...>
+  
+    # CORS setup
+    # https://pypi.org/project/django-cors-headers/
+  
+    CORS_ORIGIN_ALLOW_ALL = False
+    CORS_ORIGIN_WHITELIST = (
+           'http://localhost:8080',
+    )
+    ```
 
 ### 14. Total structure
 
@@ -372,36 +398,36 @@ backend % tree -aL 3
 ├── .env_example
 ├── .gitignore
 ├── .venv
-│   └── <..>
+│   └── <..>
 ├── Makefile
 ├── backend
-│   ├── api
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── apps.py
-│   │   ├── migrations
-│   │   ├── models.py
-│   │   ├── tests.py
-│   │   ├── urls.py
-│   │   └── views.py
-│   ├── backend
-│   │   ├── __init__.py
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   └── wsgi.py
-│   ├── db.sqlite3
-│   ├── manage.py
-│   └── vue_app
-│       ├── __init__.py
-│       ├── admin.py
-│       ├── apps.py
-│       ├── migrations
-│       ├── models.py
-│       ├── static
-│       ├── templates
-│       ├── tests.py
-│       ├── urls.py
-│       └── views.py
+│   ├── api
+│   │   ├── __init__.py
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── tests.py
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── backend
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── db.sqlite3
+│   ├── manage.py
+│   └── vue_app
+│       ├── __init__.py
+│       ├── admin.py
+│       ├── apps.py
+│       ├── migrations
+│       ├── models.py
+│       ├── static
+│       ├── templates
+│       ├── tests.py
+│       ├── urls.py
+│       └── views.py
 ├── poetry.lock
 └── pyproject.toml
 ```
@@ -409,88 +435,89 @@ backend % tree -aL 3
 ### 15. Add some features to backend
 
 * `backend/backend/urls.py`
-
-```python
-<...>
-from django.urls import path, include
-
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    path('', include('vue_app.urls')),
-]
-```
+    ```python
+    <...>
+    from django.urls import path, include
+  
+  
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('api/', include('api.urls')),
+        path('', include('vue_app.urls')),
+    ]
+    ```
 
 * `backend/vue_app/urls.py`
-```python
-from django.urls import path, re_path
-
-from .views import MainView
-
-
-urlpatterns = [
-    re_path(r'^.*$', MainView.as_view()),  # TODO: using this url make mistakes
-]
-```
+    ```python
+    from django.urls import re_path
+  
+    from .views import MainView
+  
+  
+    urlpatterns = [
+        # path("", MainView.as_view()),
+        re_path(r'^.*$', MainView.as_view()),  # TODO: using this url make mistakes
+    ]
+    ```
 
 * `backend/vue_app/views.py`
-```python
-from django.shortcuts import render
-from django.views import View
-
-
-class MainView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'index.html')
-```
+    ```python
+    from django.shortcuts import render
+    from django.views import View
+  
+  
+    class MainView(View):
+        def get(self, request, *args, **kwargs):
+            return render(request, 'index.html')
+    ```
 
 * `backend/api/urls.py`
-```python
-from django.urls import path
-
-from .views import RandomView
-
-
-urlpatterns = [
-    path('random/', RandomView.as_view())
-]
-```
+    ```python
+    from django.urls import path
+  
+    from .views import RandomView
+  
+  
+    urlpatterns = [
+        path('random/', RandomView.as_view())
+    ]
+    ```
 
 * `backend/api/views.py`
-```python
-import random
+    ```python
+    import random
+  
+    from rest_framework.views import APIView
+    from rest_framework.response import Response
+  
+  
+    class RandomView(APIView):
+        def get(self, request, *args, **kwargs):
+            """This is test function. Returns random sequence. Max length - 10."""
+  
+            count = int(request.GET.get('count', 10))
+            count = 10 if count > 10 else count
+            random_range = {i: random.randint(0, 100) for i in range(1, count + 1)}
+            return Response(random_range)
+    ```
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-
-class RandomView(APIView):
-    def get(self, request, *args, **kwargs):
-        """This is test function. Returns random sequence. Max length - 10."""
-
-        count = int(request.GET.get('count', 10))
-        count = 10 if count > 10 else count
-        random_range = {i: random.randint(0, 100) for i in range(1, count + 1)}
-        return Response(random_range)
-```
-
-### 18. Add demo page.
-*After setup frontend we will overwrite it.*
+### 18. Add demo page
+*After frontend is set up we will overwrite this page.*
 
 * `backend/vue_app/templates/index.html`
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello, World!</title>
-</head>
-<body>
-    Hello, World!
-</body>
-</html>
-```
+  
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Hello, World!</title>
+    </head>
+    <body>
+        Hello, World!
+    </body>
+    </html>
+    ```
 
 ### 19. Check out
 
@@ -498,11 +525,11 @@ class RandomView(APIView):
 backend % make run
 ```
 
-* check address [http://127.0.0.1:8000/vue/](http://127.0.0.1:8000/vue/). There you must see page with title and text
+* check address [http://127.0.0.1:8000/vue/](http://127.0.0.1:8000/vue/). There you will see page with title and text
 ```
 Hello, World!
 ```
-* cehck address [http://127.0.0.1:8000/random?count=5](http://127.0.0.1:8000/random?count=5). You must see answer:
+* check address [http://127.0.0.1:8000/random?count=5](http://127.0.0.1:8000/random?count=5). You will see the answer:
 ```JSON
 {
     "1": 46,
@@ -520,7 +547,7 @@ backend % cd ..
 
 ---
 
-## Frontend (Vue 3)
+## Frontend
 
 ### 1. Start Vue app
 ```bash
@@ -531,488 +558,513 @@ backend % cd ..
 ### 2. Setup Makefile
 ```bash
 frontend % rm README.md # I don't need it
-frontend % nano Makefile
+frontend % touch Makefile
 ```
 
 * `frontend/Makefile`
-```bash
-install:
-	npm install
+  
+    ```Makefile
+    install:
+        npm install
+  
+    run:
+        npm run serve
+  
+    build:
+        rm -rf ../backend/backend/vue_app/static/* ; \
+        rm -rf ../backend/backend/vue_app/templates/* ; \
+        npm run build ; \
+        cp public/static/* ../backend/backend/vue_app/static
+  
+    lint:
+        npm run lint
+    ```
 
-run:
-	npm run serve
-
-build:
-	rm -rf ../backend/backend/vue_app/static/* ; \
-	rm -rf ../backend/backend/vue_app/templates/* ; \
-	npm run build ; \
-	cp public/static/* ../backend/backend/vue_app/static
-
-lint:
-	npm run lint
-```
-
-### 3. Add axios
+### 3. Add axios and vue-router
 ```bash
 frontend % npm install axios --save
+frontend % npm install vue-router@next --save
 ```
 
-### 4. Setup build settings
+### 4. Set up build settings
 ```bash
-frontend % nano vue.config.js
+frontend % touch vue.config.js
 ```
+Set up `dest` directory 
 
 * `frontend/vue.config.js`
-```js
-module.exports = {
-    outputDir : '../backend/backend/vue_app',
-    assetsDir : 'static',
-    indexPath : 'templates/index.html',
-}
-```
+  
+    ```js
+    module.exports = {
+        outputDir : '../backend/backend/vue_app',
+        assetsDir : 'static',
+        indexPath : 'templates/index.html',
+    }
+    ```
 
-Also we don't need to remove 'dest' directory, so we need add tag ```--no-clean``` for build command in 
+We don't need to remove `dest` directory, so we need to add tag ```--no-clean``` to `build` command
 * `frontend/package.json`
-```js
-<...>
-"build": "vue-cli-service build --no-clean",
-<...>
-```
+  
+    ```js
+    <...>
+    "build": "vue-cli-service build --no-clean",
+    <...>
+    ```
 
-### 5. favicon as static file [?]
+### 5. Favicon as static file [?]
 Remove `public/favicon.ico`
 ```bash
 frontend % rm public/favicon.ico
 ```
 
-Make ```static``` directory in ```frontend/public```
+Make `static` directory in `frontend/public`.
 
-Place image ```favicon.png``` to ```frontend/public/static```
+Place image `favicon.png` to `frontend/public/static`.
 
-* ```frontend/public/static/favicon.png``` \
-<img src="https://s166vla.storage.yandex.net/rdisk/bf6ceacbfc23cf7a60b069a9a7dbd8c09bb34ef44065fd6c87b35828e8b3193b/60f591dd/YuF1AkqY7vFrwwvnnznVKVgQdXaY6aVykGyQom3fPDGcBQwE0k-Fgtb2UfoSCm1Mswwep1zoSAWoW9do6hwUaQ==?uid=0&filename=favicon.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=1864&hid=9f42e7b85affce806b90be0ce40c6be3&media_type=image&tknv=v2&etag=87fb134c6791e9a90e79ab92b2865377&rtoken=qlGf6AtlWpUG&force_default=no&ycrid=na-b2ef2bb8db8d26a6a30fc65156e4bd84-downloader14e&ts=5c77b18f27140&s=2e5934f223abf117eb9463a2f57111a31a98a633a6bcf2e9424f66bec475cabf&pb=U2FsdGVkX19LehIkB8E9U9F6WEldIKhZ1HaeJmYEsIqYM04fyRiOJ-RaaIKemWSUhtkRYClqHx1DKVfjuN7CrYlSzS_4jF6-Sq-YcXetHwE"/>
+* `frontend/public/static/favicon.png`
+  
+  <img src="https://s166vla.storage.yandex.net/rdisk/bf6ceacbfc23cf7a60b069a9a7dbd8c09bb34ef44065fd6c87b35828e8b3193b/60f591dd/YuF1AkqY7vFrwwvnnznVKVgQdXaY6aVykGyQom3fPDGcBQwE0k-Fgtb2UfoSCm1Mswwep1zoSAWoW9do6hwUaQ==?uid=0&filename=favicon.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&owner_uid=0&fsize=1864&hid=9f42e7b85affce806b90be0ce40c6be3&media_type=image&tknv=v2&etag=87fb134c6791e9a90e79ab92b2865377&rtoken=qlGf6AtlWpUG&force_default=no&ycrid=na-b2ef2bb8db8d26a6a30fc65156e4bd84-downloader14e&ts=5c77b18f27140&s=2e5934f223abf117eb9463a2f57111a31a98a633a6bcf2e9424f66bec475cabf&pb=U2FsdGVkX19LehIkB8E9U9F6WEldIKhZ1HaeJmYEsIqYM04fyRiOJ-RaaIKemWSUhtkRYClqHx1DKVfjuN7CrYlSzS_4jF6-Sq-YcXetHwE"/>
 
-Edit src in `public/index.html`
-```html
-<...>
-    <link rel="icon" type="image/png" href="/static/favicon.png">
-<...>
-```
+* Edit `src` in `frontend/public/index.html`
+    ```html
+    <...>
+        <link rel="icon" type="image/png" href="/static/favicon.png">
+    <...>
+    ```
 
 ### 6. Check structure
 ```bash
-frontend % tree -L 3
+frontend % tree -I node_modules
 
 .
 ├── Makefile
 ├── README.md
 ├── babel.config.js
-├── node_modules
-│   └── <..>
 ├── package-lock.json
 ├── package.json
 ├── public
-│   ├── index.html
-│   └── static
-│       └── favicon.png
+│   ├── index.html
+│   └── static
+│       └── favicon.png
 ├── src
-│   ├── App.vue
-│   ├── assets
-│   │   └── logo.png
-│   ├── components
-│   │   └── HelloWorld.vue
-│   └── main.js
-├── subl
+│   ├── App.vue
+│   ├── assets
+│   │   └── logo.png
+│   ├── components
+│   │   └── HelloWorld.vue
+│   └── main.js
 └── vue.config.js
 ```
 
 ### 7. Try to run and build
-1. Let's run dev server
+1. Run dev server
 ```bash
 frontend % make run
 ```
-Check out url [http://127.0.0.1:8080](http://127.0.0.1:8080)
+Check out url [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
-2. Let's build for prod and run from Django server
+2. Build Vue app for `production` and run it via Django _server [?]_
 ```bash
 frontend % make build
 frontend % cd ../backend
 backend % make run
 ```
-Check out url [http://127.0.0.1:8000/vue](http://127.0.0.1:8000/vue)
+Check out url [http://127.0.0.1:8000/vue](http://127.0.0.1:8000/vue).
 
-Go back to frontend
+Go back to frontend.
 ```bash
 backend % cd ../frontend
 frontend %
 ```
 
-### 8. Setup _axios_ for _dev_ and _prod_ api urls
-If you run vue app with `make run` your base url will be `http://127.0.0.1:8000`. If you
-build vue app with `make build` your base url will be `/`
+### 8. Setup _axios_ for `development` and `production` api urls
+If you run Vue app with `make run`, your base url will be `http://127.0.0.1:8000`. If you
+build Vue app with `make build`, your base url will be `/`.
 
 * `frontend/src/main.js`
-```js
-import { createApp } from 'vue'
-import App from './App.vue'
-import axios from "axios"
-
-// Setup dev and prod base urls for axios
-let dev_mode = process.env.NODE_ENV === 'development'
-axios.defaults.baseURL = dev_mode ? 'http://127.0.0.1:8000' : '/'
-
-createApp(App).mount('#app')
-```
+  
+    ```js
+    import { createApp } from 'vue'
+    import App from './App.vue'
+    import axios from "axios"
+  
+    // Setup development and production base urls for axios
+    let dev_mode = process.env.NODE_ENV === 'development'
+    axios.defaults.baseURL = dev_mode ? 'http://127.0.0.1:8000' : '/'
+  
+    createApp(App).mount('#app')
+    ```
 
 ### 9. Add functionality
-This app will have three Apps: home (`HomeApp.vue`), random sequence (`RaSq.vue`) and page not found (`NotFoundApp.vue`) \
-Also we will have three components: navigation (`NavigationModule.vue`), footer (`FooterModule.vue`) and core for 
-random sequence (`RandomSequenceModule`)
+This app will have:
+* One main app: `App.vue`
+* Three **components**:
+    1. `NavigationComponent.vue`
+    2. `FooterComponent.vue`
+    3. `RandomSequenceComponent.vue`
+* Three **views** *(for `vue-router`)*:
+    1. `HomeView.vue`
+    2. `RandomSequenceView.vue`
+    3. `PageNotFoundView.vue`
 
-* `frontend/src/components/FooterModule.vue`
-```js
-<template>
-    <div id="footer">
-      <span>Created  with</span>
-      <img alt="Vue logo" src="../assets/logo.png" height="20">
-    </div>
-</template>
-
-<script></script>
-
-<style scoped>
-  #footer {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    font-size: small;
-  }
-</style>
+```plain
+App.vue  
+  ├─ NavigationComponent.vue
+  ├─ router-view (by 'vue-router') 
+  │    ├─ HomeView.vue (on path '/')
+  │    ├─ RandomSequenceView.vue (on path '/rasq/')
+  │    │    └─ RandomSequenceComponent.vue
+  │    └─ PageNotFoundView.vue (on any other path)
+  └─ FooterComponent.vue
 ```
 
-* `frontend/src/components/NavigationModule.vue`
-```js
-<template>
-  <div>
-    <a href="/">home</a>
-    <a href="/rasq/">rasq</a>
-    <a href="/new/not/developed/feature">nefe</a>
-  </div>
-</template>
-
-<script></script>
-
-<style scoped>
-  div { margin: 1rem 0; }
-  a { padding: 0 1rem; }
-</style>
-```
-
-* `frontend/src/components/RandomSequenceModule.vue`
-```js
-<template>
-  <div id="random-sequence-module">
-    <div>
-      {{ msg }} with
-      <input v-on:input="edit_count_of_elements($event)" value="10" type="number"/>
-      numbers
-    </div>
-    <li v-for="(value, key) in elements" v-bind:key="key">
-      {{ value }}
-    </li>
-  </div>
-</template>
-
-<script>
-
-import axios from 'axios'
-
-export default {
-
-  name: 'RandomSequenceModule',
-
-  props: {
-    msg: String
-  },
-
-  data: () => ({
-    elements_count: 10,
-    elements: [],
-  }),
-
-  mounted() {
-    this.get_random_sequence()
-  },
-
-  methods: {
-    edit_count_of_elements: function (event) {
-      let event_value = Number(event.target.value)
-
-      if (event_value > 10) {
-        event.target.value = 10
-        event_value = 10
-      } else if (event_value < 0) {
-        event.target.value = 0
-        event_value = 0
+**Start with `components`.**
+* `frontend/src/components/FooterComponent.vue`
+    ```js
+    <template>
+        <div id="footer-component">
+          <span>Created  with</span>
+          <img alt="Vue logo" src="../assets/logo.png" height="20">
+        </div>
+    </template>
+  
+    <script>
+    export default { name: "FooterComponent", }
+    </script>
+  
+    <style scoped>
+      #footer-component {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: small;
       }
+    </style>
+    ```
 
-      if (event_value !== this.elements_count) {
-        this.elements_count = event_value
+* `frontend/src/components/NavigationComponent.vue`
+    ```js
+    <template>
+      <div id="navigation-component">
+        <router-link to="/">home</router-link>
+        <router-link to="/rasq/">rasq</router-link>
+        <router-link to="/new/not/developed/feature">nefe</router-link>
+      </div>
+    </template>
+  
+    <script>
+    export default { name: "NavigationComponent", }
+    </script>
+  
+    <style scoped>
+      #navigation-component { margin: 1rem 0; }
+      a { padding: 0 1rem; }
+    </style>
+    ```
+
+* `frontend/src/components/RandomSequenceComponent.vue`
+    ```js
+    <template>
+      <div id="random-sequence-component">
+        <div>
+          {{ msg }} with
+          <input v-on:input="edit_count_of_elements($event)" value="10" type="number"/>
+          numbers
+        </div>
+        <li v-for="(value, key) in elements" v-bind:key="key">
+          {{ value }}
+        </li>
+      </div>
+    </template>
+  
+    <script>
+  
+    import axios from 'axios'
+  
+    export default {
+  
+      name: 'RandomSequenceComponent',
+  
+      props: {
+        msg: String
+      },
+  
+      data: () => ({
+        elements_count: 10,
+        elements: [],
+      }),
+  
+      mounted() {
         this.get_random_sequence()
-      }
-    },
-
-    get_random_sequence: function () {
-      axios({
-            method: 'get',
-            url: 'api/random/',
-            params: {
-              count: this.elements_count
-            }
-          }).then(response => {
-            this.elements = response.data
-          })
-    }
-  }
-}
-</script>
-
-<style scoped>
-
-  #random-sequence-module {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-
-  input {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-
-    font-size: medium;
-    border: none;
-    width: 2em;
-  }
-
-  input:focus {
-    outline: none;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  li {
-    display: inline-block;
-    padding: 0.5em;
-    margin: 10px 10px;
-  }
-
-  li:hover {
-    background-color: #2c3e50;
-    color: white;
-  }
-
-</style>
-```
-
-* `frontend/src/HomeApp.vue`
-```js
-<template>
-  <div id="home-app">
-    <NavigationModule/>
-    <span>Home page</span>
-    <FooterModule/>
-  </div>
-</template>
-
-<script>
-import NavigationModule from "./components/NavigationModule.vue";
-import FooterModule from "./components/FooterModule.vue"
-
-export default {
-  name: "HomeApp.vue",
-  components: {
-    NavigationModule,
-    FooterModule,
-  }
-}
-</script>
-
-<style scoped>
-  #home-app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
-</style>
-```
-
-* `frontend/src/NotFoundApp.vue`
-```js
-<template>
-  <div id="not-found-app">
-    <NavigationModule/>
-    <span>404 | Page not found</span>
-    <FooterModule/>
-  </div>
-</template>
-
-<script>
-import NavigationModule from './components/NavigationModule.vue'
-import FooterModule from './components/FooterModule'
-
-export default {
-  name: "NotFoundApp",
-  components: {
-    NavigationModule,
-    FooterModule,
-  }
-
-}
-</script>
-
-<style scoped>
-  #not-found-app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
-
-  span {
-    font-size: larger;
-  }
-</style>
-```
-
-* `RaSqApp.vue`
-```js
-<template>
-  <div id="ra-sq-app">
-    <NavigationModule/>
-    <RandomSequenceModule msg="Generate random sequence"/>
-    <FooterModule/>
-  </div>
-</template>
-
-<script>
-import NavigationModule from './components/NavigationModule.vue'
-import RandomSequenceModule from './components/RandomSequenceModule.vue'
-import FooterModule from "./components/FooterModule.vue"
-
-export default {
-  name: 'RaSqApp',
-  components: {
-    NavigationModule,
-    RandomSequenceModule,
-    FooterModule,
-  }
-}
-</script>
-
-<style scoped>
-  #ra-sq-app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
-</style>
-```
-
-### 10. Setup routing
-Here you must understand some point
-1. Frontend here is starting to work with url routing
-2. **You still make request to the backend when you are going to url**
-* `frontend/src/main.js`
-```js
-import { createApp, h } from 'vue'
-import axios from "axios"
-
-// Setup dev and prod base urls for axios
-let dev_mode = process.env.NODE_ENV === 'development'
-axios.defaults.baseURL = dev_mode ? 'http://127.0.0.1:8000' : '/'
-
-// Setup url routing
-import RaSqApp from "./RaSqApp.vue"
-import HomeApp from "./HomeApp.vue"
-import NotFoundApp from "./NotFoundApp.vue"
-
-const routes = {
-    "/": HomeApp,
-    "/rasq/": RaSqApp,
-}
-
-const SimpleRouter = {
-    data: () => ({
-        currentRoute: window.location.pathname
-    }),
-
-    computed: {
-        CurrentComponent() {
-            return routes[this.currentRoute] || NotFoundApp
+      },
+  
+      methods: {
+        edit_count_of_elements: function (event) {
+          let event_value = Number(event.target.value)
+  
+          if (event_value > 10) {
+            event.target.value = 10
+            event_value = 10
+          } else if (event_value < 0) {
+            event.target.value = 0
+            event_value = 0
+          }
+  
+          if (event_value !== this.elements_count) {
+            this.elements_count = event_value
+            this.get_random_sequence()
+          }
+        },
+  
+        get_random_sequence: function () {
+          axios({
+                method: 'get',
+                url: 'api/random/',
+                params: {
+                  count: this.elements_count
+                }
+              }).then(response => {
+                this.elements = response.data
+              })
         }
-    },
-
-    render() {
-        return h(this.CurrentComponent)
+      }
     }
-}
+    </script>
+  
+    <style scoped>
+  
+      input {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+  
+        font-size: medium;
+        border: none;
+        width: 2em;
+      }
+  
+      input:focus { outline: none; }
+  
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+  
+      li {
+        display: inline-block;
+        padding: 0.5em;
+        margin: 10px 10px;
+      }
+  
+      li:hover {
+        background-color: #2c3e50;
+        color: white;
+      }
+  
+    </style>
+  
+    ```
 
-createApp(SimpleRouter).mount('#app')
-```
+**Then `views`.**
+* `frontend/src/views/HomeView.vue`
+    ```js
+    <template>
+      <div id="home-view">
+        <span>Home page</span>
+      </div>
+    </template>
+  
+    <script>
+    export default { name: "HomeView.vue", }
+    </script>
+    ```
 
-### 11. Check structure
+* `frontend/src/views/PageNotFoundView.vue`
+    ```js
+    <template>
+      <div id="not-found-view">
+        <span>404 | Page not found</span>
+      </div>
+    </template>
+  
+    <script>
+    export default { name: "NotFoundView", }
+    </script>
+  
+    <style scoped>
+      span { font-size: x-large; }
+    </style>
+    ```
+
+* `frontend/src/views/RandomSequenceView.vue`
+    ```js
+    <template>
+      <div id="random-sequence-view">
+        <RandomSequenceComponent msg="Generate random sequence"/>
+      </div>
+    </template>
+  
+    <script>
+    import RandomSequenceComponent from '@/components/RandomSequenceComponent.vue'
+  
+    export default {
+      name: 'RandomSequenceView',
+      components: { RandomSequenceComponent, }
+    }
+    </script>
+    ```
+
+**Now `App.vue`.**
+* `frontend/src/App.vue`
+  
+    ```js
+    <template>
+      <div id="home-app">
+        <NavigationComponent/>
+        <router-view/>
+        <FooterComponent/>
+      </div>
+    </template>
+  
+    <script>
+    import NavigationComponent from "./components/NavigationComponent.vue"
+    import FooterComponent from "./components/FooterComponent.vue"
+  
+    export default {
+      name: "App.vue",
+      components: {
+        NavigationComponent,
+        FooterComponent,
+      }
+    }
+    </script>
+  
+    <style scoped>
+      #home-app {
+        font-family: Avenir, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+      }
+    </style>
+    ```
+
+Don't try to run...
+
+### 9. Setup router
+* `frontend/src/router/index.js`
+    ```js
+    import { createWebHistory, createRouter } from 'vue-router'
+  
+    const routes = [
+        {
+            path: '/',
+            name: 'Home',
+            component: () => import("@/views/HomeView.vue"),
+        },
+        {
+            path: '/rasq/',
+            name: 'RandomSequenceGenerator',
+            component: () => import("@/views/RandomSequenceView.vue"),
+        },
+        {
+            path: '/:catchAll(.*)',
+            name: "Page not found",
+            component: () => import("@/views/PageNotFoundView.vue"),
+        },
+    ]
+  
+    const router = createRouter({
+        history: createWebHistory(),
+        routes,
+    })
+  
+    export default router
+    ```
+
+* `frontend/src/main.js`
+    ```js
+    import { createApp } from 'vue'
+    import axios from "axios"
+    import router from './router'
+  
+    import App from "./App.vue"
+  
+    // Setup dev and prod base urls for axios
+    let dev_mode = process.env.NODE_ENV === 'development'
+    axios.defaults.baseURL = dev_mode ? 'http://127.0.0.1:8000' : '/'
+  
+    // Setup url routing
+    createApp(App).use(router).mount('#app')
+    ```
+
+### 10. Check structure
 ```bash
-% frontend % tree -aL 2
+frontend % tree -I node_modules
+
 .
-├── .gitignore
 ├── Makefile
 ├── README.md
 ├── babel.config.js
-├── node_modules
-│   └── <..>
 ├── package-lock.json
 ├── package.json
 ├── public
-│   ├── index.html
-│   └── static
-│       └── favicon.png
+│   ├── index.html
+│   └── static
+│       └── favicon.png
 ├── src
-│   ├── HomeApp.vue
-│   ├── NotFoundApp.vue
-│   ├── RaSqApp.vue
-│   ├── assets
-│   │   └── logo.png
-│   ├── components
-│   │   ├── FooterModule.vue
-│   │   ├── NavigationModule.vue
-│   │   └── RandomSequenceModule.vue
-│   └── main.js
+│   ├── App.vue
+│   ├── assets
+│   │   └── logo.png
+│   ├── components
+│   │   ├── FooterComponent.vue
+│   │   ├── NavigationComponent.vue
+│   │   └── RandomSequenceComponent.vue
+│   ├── main.js
+│   ├── router
+│   │   └── index.js
+│   └── views
+│       ├── HomeView.vue
+│       ├── PageNotFoundView.vue
+│       └── RandomSequenceView.vue
 └── vue.config.js
 ```
-
 ---
-### TBC
+## Roadmap
 
-```bash
-npm install vue-router@next --save
-```
+**Backend**
+* [x] [Django](https://www.djangoproject.com)
+* [ ] [Django ORM](https://docs.djangoproject.com/en/3.2/topics/db/queries/) @ skipped
+* [x] [Django REST Framework](https://www.django-rest-framework.org)
+* [ ] DRF Serializer @ skipped
+* [ ] [Authentication](https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/) _*check source_
+* [ ] Tests
+
+**Frontend**
+* [x] [Vue.js 3](https://v3.vuejs.org)
+* [x] [axios](https://axios-http.com)
+* [ ] Setup axios for post requests (csrf-token)
+* [x] [Vue Router](https://router.vuejs.org)
+* [ ] [Vuex](https://vuex.vuejs.org)
+* [ ] Tests
+
+**Dev part**
+* [ ] [PostgreSQL](https://www.postgresql.org)
+* [ ] CI/CD
+* [ ] [Docker](https://www.docker.com)
+* [ ] [nginx](https://nginx.org)
+* [ ] CI/CD/CD
+
+**Backend 2**
+* [ ] Django / Django ORM / DRF -> 
+[Fast API](https://fastapi.tiangolo.com) 
+/ [SQLAlchemy](https://www.sqlalchemy.org) 
+/ [pydantic](https://pydantic-docs.helpmanual.io)
+
 ---
 ## Resources
 1. [Poetry](https://python-poetry.org/docs/)
@@ -1023,4 +1075,4 @@ npm install vue-router@next --save
 6. [About vue.config.js](https://cli.vuejs.org/config/)
 7. ~~[Vue.js routing](https://v3.vuejs.org/guide/routing.html#official-router)~~
 8. ~~[Github example Vue.js routing](https://github.com/phanan/vue-3.0-simple-routing-example)~~
-9. [Vue Router](https://router.vuejs.org/ru/guide/)
+9. [Vue Router](https://router.vuejs.org/guide/)

@@ -1,14 +1,16 @@
 <template>
-    <div id="footer">
+    <div id="footer-component">
       <span>Created  with</span>
       <img alt="Vue logo" src="../assets/logo.png" height="20">
     </div>
 </template>
 
-<script></script>
+<script>
+export default { name: "FooterComponent", }
+</script>
 
 <style scoped>
-  #footer {
+  #footer-component {
     position: absolute;
     bottom: 1rem;
     right: 1rem;

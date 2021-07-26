@@ -1,5 +1,5 @@
 <template>
-  <div id="random-sequence-module">
+  <div id="random-sequence-component">
     <div>
       {{ msg }} with
       <input v-on:input="edit_count_of_elements($event)" value="10" type="number"/>
@@ -13,11 +13,11 @@
 
 <script>
 
-import axios from 'axios'
+import axios from "axios"
 
 export default {
 
-  name: 'RandomSequenceModule',
+  name: "RandomSequenceComponent",
 
   props: {
     msg: String
@@ -52,8 +52,8 @@ export default {
 
     get_random_sequence: function () {
       axios({
-            method: 'get',
-            url: 'api/random/',
+            method: "get",
+            url: "api/random/",
             params: {
               count: this.elements_count
             }
@@ -67,14 +67,6 @@ export default {
 
 <style scoped>
 
-  #random-sequence-module {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-
   input {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -87,9 +79,7 @@ export default {
     width: 2em;
   }
 
-  input:focus {
-    outline: none;
-  }
+  input:focus { outline: none; }
 
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {

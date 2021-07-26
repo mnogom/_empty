@@ -1,20 +1,20 @@
 <template>
   <div id="home-app">
-    <NavigationModule/>
-    <span>Home page</span>
-    <FooterModule/>
+    <NavigationComponent/>
+    <router-view/>
+    <FooterComponent/>
   </div>
 </template>
 
 <script>
-import NavigationModule from "./components/NavigationModule.vue";
-import FooterModule from "./components/FooterModule.vue"
+import NavigationComponent from "./components/NavigationComponent.vue"
+import FooterComponent from "./components/FooterComponent.vue"
 
 export default {
-  name: "HomeApp.vue",
+  name: "App.vue",
   components: {
-    NavigationModule,
-    FooterModule,
+    NavigationComponent,
+    FooterComponent,
   }
 }
 </script>
@@ -26,6 +26,5 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
   }
 </style>
