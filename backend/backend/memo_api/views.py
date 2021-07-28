@@ -13,6 +13,8 @@ from .exceptions import MemoDataIsNotValid, MemoKeyError
 
 
 def _path_endswith_digit(request):
+    """Check if path ends with digit."""
+
     path = request.path
     path = path[:-1] if path.endswith('/') else path
     _, last_item = path.rsplit('/', 1)
@@ -20,6 +22,8 @@ def _path_endswith_digit(request):
 
 
 def _apply_allowed_methods(rule, on_true, on_false):
+    """Apply methods by rule."""
+
     def wrapper(fn):
         def inner(obj, request, *args, **kwargs):
 
@@ -30,6 +34,10 @@ def _apply_allowed_methods(rule, on_true, on_false):
 
             obj.allowed_methods = obj.allowed_methods.union(custom_methods)
             obj.headers['Allow'] = ', '.join(obj.allowed_methods)
+
+            if request.method not in obj.allowed_methods:
+                return Response({'detail': 'method not allowed here'},
+                                status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
             return fn(obj, request, *args, **kwargs)
         return inner
@@ -112,6 +120,12 @@ class SectionsView(APIView):
         return Response({'detail': 'done'},
                         status=status.HTTP_200_OK)
 
+    @_apply_allowed_methods(rule=_path_endswith_digit,
+                            on_true=['PATCH', 'DELETE', ],
+                            on_false=['POST', ])
+    def options(self, request, *args, **kwargs):
+        return super().options(request, *args, **kwargs)
+
 
 class NoteView(APIView):
     """ Note View."""
@@ -188,3 +202,10 @@ class NoteView(APIView):
                             status=status.HTTP_404_NOT_FOUND)
         return Response({'detail': message},
                         status=status.HTTP_200_OK)
+
+
+    @_apply_allowed_methods(rule=_path_endswith_digit,
+                            on_true=['PATCH', 'DELETE', ],
+                            on_false=['POST', ])
+    def options(self, request, *args, **kwargs):
+        return super().options(request, *args, **kwargs)
