@@ -1,2 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d0e1fe1"],{"7d97":function(e,n,o){"use strict";o.r(n);var a=o("7a23"),c={id:"home-view"},d=Object(a["f"])("span",null,"Home page",-1);function i(e,n,o,i,t,u){return Object(a["o"])(),Object(a["d"])("div",c,[d])}var t={name:"HomeView.vue"};t.render=i;n["default"]=t}}]);
-//# sourceMappingURL=chunk-2d0e1fe1.9f8d7657.js.map

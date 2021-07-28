@@ -55,6 +55,7 @@ cd empty_project
       mv .env_example .env ; \
       make migrations ; \
       make migrate ; \
+      make load-demo-data ; \
       cd ../frontend ; \
       make install
   
@@ -138,27 +139,31 @@ backend % touch Makefile
     ```makefile
     install:
         poetry install
-  
+    
     run:
         poetry run python backend/manage.py runserver
-  
+    
     gunicorn-run:
         source .venv/bin/activate ; \
         cd backend ; \
         gunicorn backend.wsgi
-  
+    
     django-shell:
         cd backend ; \
         poetry run python manage.py shell
-  
+    
     migrations:
         poetry run python backend/manage.py makemigrations
-  
+    
     migrate:
         poetry run python backend/manage.py migrate
-  
+    
     lint:
         poetry run flake8 backend
+    
+    load-demo-data:
+        poetry run python backend/manage.py loaddata backend/memo_api/fixtures/01_sections.yaml ; \
+        poetry run python backend/manage.py loaddata backend/memo_api/fixtures/02_notes.yaml
     ```
 
 ### 5. Add packages
@@ -168,23 +173,25 @@ backend % poetry add django@2.2.10
 backend % poetry add djangorestframework
 backend % poetry add django-cors-headers
 backend % poetry add environs
+backend % poetry add pyyaml
 backend % poetry add flake8 --dev
 backend % poetry add gunicorn --dev
 
 backend % poetry show
 
-django              2.2.10 A high-level Python Web framework that encourages rapid development and clean, pragma...
-django-cors-headers 3.7.0  django-cors-headers is a Django application for handling the server headers required ...
+django              2.2.10 A high-level Python Web framework that encourage...
+django-cors-headers 3.7.0  django-cors-headers is a Django application for ...
 djangorestframework 3.12.4 Web APIs for Django, made easy.
 environs            9.3.2  simplified environment variable parsing
-flake8              3.9.2  the modular source code checker: pep8 pyflakes and co
+flake8              3.9.2  the modular source code checker: pep8 pyflakes a...
 gunicorn            20.1.0 WSGI HTTP Server for UNIX
-marshmallow         3.12.2 A lightweight library for converting complex datatypes to and from native Python data...
+marshmallow         3.12.2 A lightweight library for converting complex dat...
 mccabe              0.6.1  McCabe checker, plugin for flake8
 pycodestyle         2.7.0  Python style guide checker
 pyflakes            2.3.1  passive checker of Python programs
-python-dotenv       0.18.0 Read key-value pairs from a .env file and set them as environment variables
+python-dotenv       0.18.0 Read key-value pairs from a .env file and set th...
 pytz                2021.1 World timezone definitions, modern and historical
+pyyaml              5.4.1  YAML parser and emitter for Python
 sqlparse            0.4.1  A non-validating SQL parser.
 ```
 
@@ -284,12 +291,12 @@ backend/backend % mkdir vue_app/static
 backend/backend % cd ..
 ```
 
-This app will work as API.
+This app will work as random API.
 ```bash
 backend % cd backend
 
-backend/backend % poetry run django-admin startapp api
-backend/backend % touch api/urls.py
+backend/backend % poetry run django-admin startapp random_api
+backend/backend % touch random_api/urls.py
 backend/backend % cd ..
 ```
 
@@ -304,8 +311,8 @@ backend % tree -aL 2 -I .venv
 ├── .gitignore
 ├── Makefile
 ├── backend
-│   ├── api
 │   ├── backend
+│   ├── random_api
 │   ├── db.sqlite3
 │   ├── manage.py
 │   └── vue_app
@@ -317,7 +324,12 @@ backend % tree -aL 2 -I .venv
 backend % tree backend
 
 backend
-├── api
+├── backend
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── random_api
 │   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
@@ -327,11 +339,6 @@ backend
 │   ├── tests.py
 │   ├── urls.py
 │   └── views.py
-├── backend
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
 ├── db.sqlite3
 ├── manage.py
 └── vue_app
@@ -359,7 +366,7 @@ backend
          <...>,
         'corsheaders',
         'rest_framework',
-        'api',
+        'random_api',
         'vue_app',
     ]
     <...>
@@ -401,7 +408,12 @@ backend % tree -aL 3
 │   └── <..>
 ├── Makefile
 ├── backend
-│   ├── api
+│   ├── backend
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── random_api
 │   │   ├── __init__.py
 │   │   ├── admin.py
 │   │   ├── apps.py
@@ -410,11 +422,6 @@ backend % tree -aL 3
 │   │   ├── tests.py
 │   │   ├── urls.py
 │   │   └── views.py
-│   ├── backend
-│   │   ├── __init__.py
-│   │   ├── settings.py
-│   │   ├── urls.py
-│   │   └── wsgi.py
 │   ├── db.sqlite3
 │   ├── manage.py
 │   └── vue_app
@@ -442,7 +449,7 @@ backend % tree -aL 3
   
     urlpatterns = [
         path('admin/', admin.site.urls),
-        path('api/', include('api.urls')),
+        path('api/random/', include('random_api.urls')),
         path('', include('vue_app.urls')),
     ]
     ```
@@ -450,10 +457,10 @@ backend % tree -aL 3
 * `backend/vue_app/urls.py`
     ```python
     from django.urls import re_path
-  
+
     from .views import MainView
-  
-  
+    
+    
     urlpatterns = [
         # path("", MainView.as_view()),
         re_path(r'^.*$', MainView.as_view()),  # TODO: using this url make mistakes
@@ -471,30 +478,32 @@ backend % tree -aL 3
             return render(request, 'index.html')
     ```
 
-* `backend/api/urls.py`
+* `backend/random_api/urls.py`
     ```python
-    from django.urls import path
-  
-    from .views import RandomView
-  
-  
+    from django.urls import path, re_path
+    
+    from .views import RandomSequenceView
+    
+    
     urlpatterns = [
-        path('random/', RandomView.as_view())
+        path('sequence/', RandomSequenceView.as_view()),
     ]
     ```
 
-* `backend/api/views.py`
+* `backend/random_api/views.py`
     ```python
     import random
-  
+
     from rest_framework.views import APIView
     from rest_framework.response import Response
-  
-  
-    class RandomView(APIView):
+    
+    
+    class RandomSequenceView(APIView):
+        """Random sequence View."""
+    
         def get(self, request, *args, **kwargs):
             """This is test function. Returns random sequence. Max length - 10."""
-  
+    
             count = int(request.GET.get('count', 10))
             count = 10 if count > 10 else count
             random_range = {i: random.randint(0, 100) for i in range(1, count + 1)}
@@ -525,11 +534,11 @@ backend % tree -aL 3
 backend % make run
 ```
 
-* check address [http://127.0.0.1:8000/vue/](http://127.0.0.1:8000/vue/). There you will see page with title and text
+* check address [http://127.0.0.1:8000](http://127.0.0.1:8000/vue/). There you will see page with title and text
 ```
 Hello, World!
 ```
-* check address [http://127.0.0.1:8000/random?count=5](http://127.0.0.1:8000/random?count=5). You will see the answer:
+* check address [http://127.0.0.1:8000/api/random/sequence/?count=5](http://127.0.0.1:8000/api/random/sequence/?count=5). You will see the answer:
 ```JSON
 {
     "1": 46,
@@ -669,7 +678,7 @@ frontend % make build
 frontend % cd ../backend
 backend % make run
 ```
-Check out url [http://127.0.0.1:8000/vue](http://127.0.0.1:8000/vue).
+Check out url [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 Go back to frontend.
 ```bash
@@ -819,7 +828,7 @@ App.vue
         get_random_sequence: function () {
           axios({
                 method: 'get',
-                url: 'api/random/',
+                url: "api/random/sequence/",
                 params: {
                   count: this.elements_count
                 }
@@ -1038,10 +1047,10 @@ frontend % tree -I node_modules
 
 **Backend**
 * [x] [Django](https://www.djangoproject.com)
-* [ ] [Django ORM](https://docs.djangoproject.com/en/3.2/topics/db/queries/) @ skipped
+* [ ] [Django ORM](https://docs.djangoproject.com/en/3.2/topics/db/queries/) @ describe
 * [x] [Django REST Framework](https://www.django-rest-framework.org)
-* [ ] DRF Serializer @ skipped
-* [ ] [Authentication](https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/) _*check source_
+* [ ] DRF Serializer @ describe
+* [ ] Authentication _*check source_
 * [ ] Tests
 
 **Frontend**
@@ -1076,3 +1085,18 @@ frontend % tree -I node_modules
 7. ~~[Vue.js routing](https://v3.vuejs.org/guide/routing.html#official-router)~~
 8. ~~[Github example Vue.js routing](https://github.com/phanan/vue-3.0-simple-routing-example)~~
 9. [Vue Router](https://router.vuejs.org/guide/)
+
+## Unsorted
+
+
+
+```bash
+backend/backend % poetry run django-admin startapp memo_api
+```
+
+1. https://www.django-rest-framework.org/api-guide/authentication/
+2. https://www.django-rest-framework.org/api-guide/permissions/
+3. https://stackoverflow.com/questions/35970970/django-rest-framework-permission-classes-of-viewset-method
+4. https://pythonru.com/uroki/django-rest-api
+5. https://auth0.com/blog/building-modern-applications-with-django-and-vuejs/
+6. https://vue-loader-v14.vuejs.org/ru/configurations/pre-processors.html

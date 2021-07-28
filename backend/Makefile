@@ -22,3 +22,6 @@ migrate:
 lint:
 	poetry run flake8 backend
 
+load-demo-data:
+	poetry run python backend/manage.py loaddata backend/memo_api/fixtures/01_sections.yaml ; \
+	poetry run python backend/manage.py loaddata backend/memo_api/fixtures/02_notes.yaml

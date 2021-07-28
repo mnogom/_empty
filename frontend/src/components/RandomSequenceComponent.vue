@@ -2,21 +2,22 @@
   <div id="random-sequence-component">
     <div>
       {{ msg }} with
-      <input v-on:input="edit_count_of_elements($event)" value="10" type="number"/>
+      <input v-on:input="edit_count_of_elements($event)"
+             value="10"
+             type="number"/>
       numbers
     </div>
-    <li v-for="(value, key) in elements" v-bind:key="key">
+    <li v-for="(value, key) in elements"
+        v-bind:key="key">
       {{ value }}
     </li>
   </div>
 </template>
 
 <script>
-
 import axios from "axios"
 
 export default {
-
   name: "RandomSequenceComponent",
 
   props: {
@@ -53,7 +54,7 @@ export default {
     get_random_sequence: function () {
       axios({
             method: "get",
-            url: "api/random/",
+            url: "api/random/sequence/",
             params: {
               count: this.elements_count
             }

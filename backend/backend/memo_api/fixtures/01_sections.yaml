@@ -1,0 +1,54 @@
+- model: memo_api.Section
+  pk: 1
+  fields:
+    name: Unsorted
+
+- model: memo_api.Section
+  pk: 2
+  fields:
+    name: Backend - Framework
+
+- model: memo_api.Section
+  pk: 3
+  fields:
+    name: Backend - ORM
+
+- model: memo_api.Section
+  pk: 4
+  fields:
+    name: Backend - Serializer
+
+- model: memo_api.Section
+  pk: 5
+  fields:
+    name: Frontend - Architecture
+
+- model: memo_api.Section
+  pk: 6
+  fields:
+    name: Frontend - Modules
+
+- model: memo_api.Section
+  pk: 7
+  fields:
+    name: CSS/HTML
+
+- model: memo_api.Section
+  pk: 8
+  fields:
+    name: GIT
+
+- model: memo_api.Section
+  pk: 9
+  fields:
+    name: IDE
+
+- model: memo_api.Section
+  pk: 10
+  fields:
+    name: Hosting
+
+- model: memo_api.Section
+  pk: 11
+  fields:
+    name: Clean Python

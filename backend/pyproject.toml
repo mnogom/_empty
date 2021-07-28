@@ -10,6 +10,7 @@ Django = "2.2.10"
 environs = "^9.3.2"
 djangorestframework = "^3.12.4"
 django-cors-headers = "^3.7.0"
+PyYAML = "^5.4.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"

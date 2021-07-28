@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'api',
+    'random_api',
+    'memo_api',
     'vue_app',
 ]
 

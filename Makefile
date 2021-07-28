@@ -4,6 +4,7 @@ make install:
 	mv .env_example .env ; \
 	make migrations ; \
 	make migrate ; \
+	make load-demo-data ; \
 	cd ../frontend ; \
 	make install
 

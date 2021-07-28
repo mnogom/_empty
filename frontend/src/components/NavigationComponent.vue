@@ -2,6 +2,7 @@
   <div id="navigation-component">
     <router-link to="/">home</router-link>
     <router-link to="/rasq/">rasq</router-link>
+    <router-link to="/memo/">memo</router-link>
     <router-link to="/new/not/developed/feature">nefe</router-link>
   </div>
 </template>

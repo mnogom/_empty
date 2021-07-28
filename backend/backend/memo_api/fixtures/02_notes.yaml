@@ -1,0 +1,135 @@
+- model: memo_api.Note
+  pk: 1
+  fields:
+    section_id: 2
+    name: Fullstack Fast API stack
+    url: https://fastmemo_api.tiangolo.com/project-generation/
+    description: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+
+- model: memo_api.Note
+  pk: 2
+  fields:
+    section_id: 2
+    name: Fullstack Fast API project
+    url: https://github.com/tiangolo/full-stack-fastapi-postgresql
+    description: Fusce porttitor ligula at mauris dignissim viverra
+
+- model: memo_api.Note
+  pk: 3
+  fields:
+    section_id: 2
+    name: Awesome Django
+    url: https://github.com/wsvincent/awesome-django
+    description: Aliquam ante urna, tristique sit amet elementum a, tristique sit amet neque
+
+- model: memo_api.Note
+  pk: 4
+  fields:
+    section_id: 3
+    name: ORM async?
+    url: https://www.sqlalchemy.org
+    description: Sed venenatis diam non nisl sodales, at volutpat ligula interdum
+
+- model: memo_api.Note
+  pk: 5
+  fields:
+    section_id: 3
+    name: SQL Alchemy example
+    url: https://habr.com/ru/post/541256/
+    description: Integer vestibulum elit commodo ex feugiat varius
+
+- model: memo_api.Note
+  pk: 6
+  fields:
+    section_id: 3
+    name: Django like ORM
+    url: https://docs.peewee-orm.com/en/latest/peewee/models.html
+    description: Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean dictum justo nisl, et malesuada justo facilisis eget
+
+- model: memo_api.Note
+  pk: 7
+  fields:
+    section_id: 4
+    name: Pydantic
+    url: https://pydantic-docs.helpmanual.io Serializer
+    description: Integer quam mauris, feugiat ac dolor ut, volutpat sollicitudin risus
+
+- model: memo_api.Note
+  pk: 8
+  fields:
+    section_id: 5
+    name: architecture blog [?]
+    url: https://wesbos.com
+    description: Donec placerat blandit nunc
+
+- model: memo_api.Note
+  pk: 9
+  fields:
+    section_id: 5
+    name: Style guides
+    url: https://v3.ru.vuejs.org/ru/style-guide/#локальные-стили-компонента-важно
+    description: Quisque eu lacus a nunc cursus vulputate
+
+- model: memo_api.Note
+  pk: 10
+  fields:
+    section_id: 6
+    name: The headless editor framework for web artisans
+    url: https://www.tiptap.dev
+    description: Cras cursus in nibh molestie tincidunt.Maecenas quam nibh, vestibulum ut tellus nec, interdum luctus tortor
+
+- model: memo_api.Note
+  pk: 11
+  fields:
+    section_id: 7
+    name: CSS Framework
+    url: https://tailwindcss.com
+    description: Praesent nunc metus, sodales in gravida ac, lacinia nec velit
+
+- model: memo_api.Note
+  pk: 12
+  fields:
+    section_id: 7
+    name: Builders for CSS
+    url: https://habr.com/ru/company/vdsina/blog/552562/
+    description: Aenean vestibulum, lacus ut consectetur euismod, nisl felis vulputate diam, efficitur finibus orci dolor eget risus
+
+- model: memo_api.Note
+  pk: 13
+  fields:
+    section_id: 8
+    name: GIT Rebase for history
+    url: https://habr.com/ru/company/flant/blog/536698/
+    description: Integer non fermentum lacus
+
+- model: memo_api.Note
+  pk: 14
+  fields:
+    section_id: 9
+    name: AI pair programmer for Visual code
+    url: https://copilot.github.com
+    description: Nulla sodales sapien ut lacinia lacinia
+
+- model: memo_api.Note
+  pk: 15
+  fields:
+    section_id: 10
+    name: DETA
+    url: https://www.deta.sh
+    description: Morbi facilisis porta nulla
+
+- model: memo_api.Note
+  pk: 16
+  fields:
+    section_id: 11
+    name: macos menu bar app
+    url: https://camillovisini.com/article/create-macos-menu-bar-app-pomodoro/
+    description: Etiam ut odio eros
+
+- model: memo_api.Note
+  pk: 17
+  fields:
+    section_id: 11
+    name: Awesome python
+    url: https://github.com/vinta/awesome-python
+    description: Praesent rutrum rutrum leo ut laoreet
