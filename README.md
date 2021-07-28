@@ -1047,16 +1047,16 @@ frontend % tree -I node_modules
 
 **Backend**
 * [x] [Django](https://www.djangoproject.com)
-* [ ] [Django ORM](https://docs.djangoproject.com/en/3.2/topics/db/queries/) @ describe
+* [x] [Django ORM](https://docs.djangoproject.com/en/3.2/topics/db/queries/) @ describe
 * [x] [Django REST Framework](https://www.django-rest-framework.org)
-* [ ] DRF Serializer @ describe
+* [x] [DRF Serializer](https://www.django-rest-framework.org/api-guide/serializers/) @ describe
 * [ ] Authentication _*check source_
 * [ ] Tests
 
 **Frontend**
 * [x] [Vue.js 3](https://v3.vuejs.org)
 * [x] [axios](https://axios-http.com)
-* [ ] Setup axios for post requests (csrf-token)
+* [ ] ~~Setup axios for post requests (csrf-token)~~ ¯\\\_(ツ)_/¯
 * [x] [Vue Router](https://router.vuejs.org)
 * [ ] [Vuex](https://vuex.vuejs.org)
 * [ ] Tests
