@@ -59,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.middleware.trace_middleware.trace_middleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -140,3 +141,20 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
     'http://localhost:8080',
 )
+
+
+# TraceMiddleware setup
+
+APPS_TO_TRACE = [
+    'random_api',
+    'memo_api',
+    'vue_app',
+]
+
+REQUEST_PARAMS_TO_LOG = [
+    'method',
+    'path',
+    'headers',
+    'COOKIES',
+    'data',
+]
