@@ -12,10 +12,9 @@ from .serializers import SectionSerializer, NoteSerializer
 from .exceptions import MemoDataIsNotValid, MemoKeyError
 
 
-def _path_endswith_digit(request):
+def _path_endswith_digit(path):
     """Predicate to check if path ends with digit."""
 
-    path = request.path
     path = path[:-1] if path.endswith('/') else path
     _, last_item = path.rsplit('/', 1)
     return last_item.isdigit()
@@ -27,7 +26,7 @@ def _apply_allowed_methods(rule, on_true, on_false, default=('HEAD', 'OPTIONS', 
     def wrapper(fn):
         def inner(obj, request, *args, **kwargs):
 
-            obj.allowed_methods = set(default).union(on_true if rule(request) else on_false)
+            obj.allowed_methods = set(default).union(on_true if rule(request.path) else on_false)
             obj.headers['Allow'] = ', '.join(obj.allowed_methods)
 
             if request.method not in obj.allowed_methods:

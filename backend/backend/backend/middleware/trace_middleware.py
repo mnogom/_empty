@@ -47,10 +47,9 @@ def _parse_frame(frame, _id):
                                                                   name=key,
                                                                   value='')
                     for param in settings.REQUEST_PARAMS_TO_LOG:
-                        if param in value.__dir__():
-                            trace_string += '\n' + SUB_STRING_TEMP.format(indent=' ' * 22,
-                                                                          name=param,
-                                                                          value=getattr(value, param))
+                        trace_string += '\n' + SUB_STRING_TEMP.format(indent=' ' * 22,
+                                                                      name=param,
+                                                                      value=getattr(value, param, None))
                 else:
                     trace_string += '\n' + SUB_STRING_TEMP.format(indent=' ' * 18,
                                                                   name=key,

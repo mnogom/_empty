@@ -157,4 +157,5 @@ REQUEST_PARAMS_TO_LOG = [
     'headers',
     'COOKIES',
     'data',
+    'GET',
 ]
