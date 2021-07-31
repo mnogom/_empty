@@ -1,7 +1,7 @@
 make install:
 	cd backend ; \
 	make install ; \
-	mv .env_example .env ; \
+	cp .env_example .env ; \
 	make migrations ; \
 	make migrate ; \
 	make load-demo-data ; \

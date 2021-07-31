@@ -1089,10 +1089,16 @@ frontend % tree -I node_modules
 ## Unsorted
 
 
-
+### New app with models
 ```bash
 backend/backend % poetry run django-admin startapp memo_api
 ```
+
+### Cookie setup for frontend
+```bash
+frontend % npm install js-cookie --save
+```
+
 
 1. https://www.django-rest-framework.org/api-guide/authentication/
 2. https://www.django-rest-framework.org/api-guide/permissions/
